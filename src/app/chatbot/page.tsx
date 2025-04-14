@@ -57,7 +57,7 @@ export default function ChatbotPage() {
     setSessionId(storedSessionId)
 
     if (storedMessages.length === 0) {
-      const intro = {
+      const intro: Message = {
         role: 'agent',
         text: "Hi there! To get started, can you tell me your email or phone number so I can look up your loyalty profile?"
       }
