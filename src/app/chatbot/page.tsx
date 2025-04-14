@@ -12,12 +12,21 @@ type Message = {
   steps?: string[]
 }
 
+type MemberContextType = {
+  offers?: unknown[]
+  campaigns?: unknown[]
+  point_accounts?: unknown[]
+  recent_activity?: unknown[]
+  timeline?: unknown[]
+  [key: string]: unknown
+}
+
 export default function ChatbotPage() {
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
   const [sessionId, setSessionId] = useState<string>('')
-  const [rawContext, setRawContext] = useState<any | null>(null)
+  const [rawContext, setRawContext] = useState<MemberContextType | null>(null)
   const [mode, setMode] = useState<'classification' | 'reasoning' | 'freeform'>('freeform')
 
   const TypingDots = () => (

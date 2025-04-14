@@ -2,8 +2,17 @@
 
 import { useState, useEffect } from 'react'
 
+type MemberContextType = {
+  offers?: unknown[]
+  campaigns?: unknown[]
+  point_accounts?: unknown[]
+  recent_activity?: unknown[]
+  timeline?: unknown[]
+  [key: string]: unknown
+}
+
 type Props = {
-  context: any | null
+  context: MemberContextType | null
 }
 
 export default function MemberContextViewer({ context }: Props) {
@@ -27,7 +36,7 @@ export default function MemberContextViewer({ context }: Props) {
     return `${min}m ${sec}s`
   }
 
-  const getSizeKB = (data: any) => {
+  const getSizeKB = (data: MemberContextType) => {
     const str = JSON.stringify(data)
     return (new TextEncoder().encode(str).length / 1024).toFixed(1)
   }
@@ -37,7 +46,8 @@ export default function MemberContextViewer({ context }: Props) {
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <button onClick={() => setOpen(!open)}
+      <button
+        onClick={() => setOpen(!open)}
         className="bg-[#2d2f38] border border-gray-500 text-gray-300 text-sm px-3 py-1.5 rounded hover:text-white transition"
       >
         {open ? 'Hide MemberContext' : 'View MemberContext'}
