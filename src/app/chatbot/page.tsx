@@ -119,12 +119,13 @@ export default function ChatbotPage() {
       }
 
       await simulateTyping(agentReply, steps)
-    } catch (e: any) {
-      setMessages((prev) => [
-        ...prev.slice(0, -1),
-        { role: 'agent', text: e.message || 'Something went wrong' },
-      ])
-    } finally {
+      } catch (e) {
+        const err = e as Error
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          { role: 'agent', text: err.message || 'Something went wrong' },
+        ])
+      } finally {
       setLoading(false)
     }
   }
