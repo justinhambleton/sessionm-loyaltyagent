@@ -5,6 +5,8 @@ import { v4 as uuid } from 'uuid'
 import MemberContextViewer from '@/components/MemberContextViewer'
 import ReactMarkdown from 'react-markdown'
 
+const MCP_BACKEND_SERVER = process.env.MCP_BACKEND_SERVER || "http://localhost:8000";
+
 type Message = {
   role: 'user' | 'agent'
   text: string
@@ -28,6 +30,33 @@ export default function ChatbotPage() {
   const [sessionId, setSessionId] = useState<string>('')
   const [rawContext, setRawContext] = useState<MemberContextType | null>(null)
   const [mode, setMode] = useState<'classification' | 'reasoning' | 'freeform'>('freeform')
+  const [jwt, setJwt] = useState<string | null>(null)
+  const [jwtError, setJwtError] = useState<string | null>(null)
+
+  // On mount, fetch JWT if not present
+  useEffect(() => {
+    const fetchJwt = async () => {
+      const storedJwt = localStorage.getItem('jwtToken')
+      if (storedJwt) {
+        setJwt(storedJwt)
+        return
+      }
+      try {
+        const res = await fetch(`${MCP_BACKEND_SERVER}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'chatbot', password: 'chatbot' })
+        })
+        const data = await res.json()
+        if (!res.ok || !data.access_token) throw new Error(data.detail || 'JWT fetch failed')
+        setJwt(data.access_token)
+        localStorage.setItem('jwtToken', data.access_token)
+      } catch (err: any) {
+        setJwtError(err.message)
+      }
+    }
+    fetchJwt()
+  }, [])
 
   const TypingDots = () => (
     <span className="inline-block animate-pulse text-gray-400">Agent is typing...</span>
@@ -75,6 +104,10 @@ export default function ChatbotPage() {
   }, [messages])
 
   const handleSubmit = async () => {
+    if (!jwt) {
+      setJwtError('Unable to authenticate with backend. Please contact support.')
+      return
+    }
     if (!input.trim()) return
 
     const userInput = input.trim()
@@ -89,18 +122,18 @@ export default function ChatbotPage() {
     try {
       const isIdentifier = /@|\d{6,}/.test(userInput)
 
-      let endpoint = 'https://sessionm-mcp.onrender.com/context/agent'
+      let endpoint = `${MCP_BACKEND_SERVER}/context/agent`
 
       if (mode === 'reasoning' && !isIdentifier) {
-        endpoint = 'https://sessionm-mcp.onrender.com/context/reason'
+        endpoint = `${MCP_BACKEND_SERVER}/context/reason`
       } else if (mode === 'freeform') {
-        endpoint = 'https://sessionm-mcp.onrender.com/context/freeform'
+        endpoint = `${MCP_BACKEND_SERVER}/context/freeform`
       }
 
       const res = await fetch(`${endpoint}?prompt=${encodeURIComponent(userInput)}`, {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer dummy-token',
+          Authorization: `Bearer ${jwt}`,
           'Session-Id': sessionId,
         },
       })
@@ -136,6 +169,23 @@ export default function ChatbotPage() {
     setMessages([])
     setRawContext(null)
     setSessionId(uuid())
+  }
+
+  if (jwtError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#202123] text-white">
+        <h2 className="text-2xl mb-4">Unable to authenticate with backend</h2>
+        <div className="text-red-400 mb-2">{jwtError}</div>
+        <p>Please contact support.</p>
+      </div>
+    )
+  }
+  if (!jwt) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#202123] text-white">
+        <h2 className="text-2xl mb-4">Connecting to backend…</h2>
+      </div>
+    )
   }
 
   return (
