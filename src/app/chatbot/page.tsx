@@ -51,8 +51,9 @@ export default function ChatbotPage() {
         if (!res.ok || !data.access_token) throw new Error(data.detail || 'JWT fetch failed')
         setJwt(data.access_token)
         localStorage.setItem('jwtToken', data.access_token)
-      } catch (err: any) {
-        setJwtError(err.message)
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'JWT fetch failed'
+        setJwtError(message)
       }
     }
     fetchJwt()
@@ -152,11 +153,11 @@ export default function ChatbotPage() {
       }
 
       await simulateTyping(agentReply, steps)
-      } catch (e) {
-        const err = e as Error
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : 'Something went wrong'
         setMessages((prev) => [
           ...prev.slice(0, -1),
-          { role: 'agent', text: err.message || 'Something went wrong' },
+          { role: 'agent', text: message },
         ])
       } finally {
       setLoading(false)
