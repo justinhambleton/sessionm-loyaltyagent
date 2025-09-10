@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0b0b; /* Mastercard charcoal */
+  --foreground: #ededed; /* Soft white */
+  --mc-red: #eb001b;
+  --mc-orange: #f79e1b;
+  --mc-charcoal: #0b0b0b;
+  --mc-surface: #171717;
+  --mc-surface-2: #1f1f1f;
+  --mc-border: #262626;
+  --mc-muted: #a3a3a3;
 }
 
 @theme inline {
@@ -12,17 +19,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Always-on dark theme */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -32,4 +34,10 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Subtle glass effect surface */
+.glass-surface {
+  background: color-mix(in srgb, var(--mc-charcoal) 82%, transparent);
+  backdrop-filter: blur(8px);
 }

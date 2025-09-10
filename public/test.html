@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Fetch Test</title>
+</head>
+<body>
+    <h1>Direct Browser Fetch Test</h1>
+    <button onclick="testFetch()">Test Fetch</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testFetch() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                console.log('Testing direct fetch to MCP server...');
+                const response = await fetch('http://127.0.0.1:8000/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ username: 'chatbot', password: 'chatbot' })
+                });
+                
+                console.log('Response:', response);
+                const data = await response.json();
+                console.log('Data:', data);
+                
+                result.innerHTML = `Success: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                console.error('Error:', error);
+                result.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
