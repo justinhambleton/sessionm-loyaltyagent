@@ -255,7 +255,7 @@ export default function ChatbotApp() {
           aria-hidden="true"
         />
         <div className="relative z-10 min-h-screen flex items-center justify-center bg-black/30">
-          <h2 className="text-2xl mb-4">Connecting to backend…</h2>
+          <h2 className="text-2xl mb-4">Connecting to SessionM MCP Server...</h2>
         </div>
       </div>
     )
