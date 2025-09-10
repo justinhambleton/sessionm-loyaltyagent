@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const maxDuration = 60
 
 function getBaseUrl() {
   const base = process.env.MCP_BACKEND_SERVER
@@ -66,8 +68,8 @@ async function handleProxy(req: NextRequest, pathSegments: string[]) {
     upstreamHeaders.delete('content-length')
     upstreamHeaders.delete('connection')
 
-    const buf = await upstream.arrayBuffer()
-    return new Response(buf, { status: upstream.status, headers: upstreamHeaders })
+    // Stream the upstream response to the client to reduce buffering and TTFB
+    return new Response(upstream.body, { status: upstream.status, headers: upstreamHeaders })
   } catch (err: unknown) {
     const took = Date.now() - start
     let message = 'Upstream fetch failed'

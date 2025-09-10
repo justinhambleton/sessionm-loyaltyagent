@@ -255,7 +255,7 @@ export default function ChatbotApp() {
           aria-hidden="true"
         />
         <div className="relative z-10 min-h-screen flex items-center justify-center bg-black/30">
-          <h2 className="text-2xl mb-4">Connecting to SessionM MCP Server...</h2>
+          <h2 className="text-2xl mb-4">Connecting to the SessionM MCP Server...</h2>
         </div>
       </div>
     )
@@ -353,7 +353,7 @@ export default function ChatbotApp() {
                 </button>
               </div>
               <div className="mt-2 text-center text-[11px] text-[#a3a3a3]">
-                Experimental. Don’t share any sensitive data. | a sessionm product | © {new Date().getFullYear()} All Rights Reserved
+                Experimental. Don’t share any sensitive data. | A Mastercard Sessionm Product | © {new Date().getFullYear()} All Rights Reserved
                 <button type="button" onClick={resetChat} className="ml-3 underline hover:no-underline">Reset</button>
               </div>
             </form>
